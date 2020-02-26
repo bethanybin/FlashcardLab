@@ -67,5 +67,24 @@ class ViewController: UIViewController {
         }
     }
     
+    func updateFlashcard(question: String, answer: String, extraAnswerOne: String?, extraAnswerTwo: String?) {
+        self.frontLabel.text = question
+        self.backLabel.text = answer
+        
+        self.firstOption.setTitle(extraAnswerOne, for: .normal)
+        self.secondOption.setTitle(answer, for: .normal)
+        self.thirdOption.setTitle(extraAnswerTwo, for: .normal)
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        let navigationController = segue.destination as! UINavigationController
+        let creationController = navigationController.topViewController as! CreationViewController
+        creationController.flashcardsController = self
+        if segue.identifier == "EditSegue" {
+            creationController.initialQuestion = frontLabel.text
+            creationController.initialAnswer = backLabel.text
+        }
+    }
+    
 }
 
