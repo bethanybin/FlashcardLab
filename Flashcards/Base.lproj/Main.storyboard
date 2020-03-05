@@ -83,6 +83,22 @@
                                     <segue destination="gHD-j2-j7v" kind="presentation" id="r6b-ra-qvt"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vYA-Ps-UB2">
+                                <rect key="frame" x="54" y="795" width="31" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Prev"/>
+                                <connections>
+                                    <action selector="didTapOnPrev:" destination="BYZ-38-t0r" eventType="touchUpInside" id="LjQ-jh-et8"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="IyI-Sp-j84">
+                                <rect key="frame" x="338" y="795" width="32" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Next"/>
+                                <connections>
+                                    <action selector="didTapOnNext:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Ih9-Jn-N74"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
@@ -92,6 +108,8 @@
                         <outlet property="card" destination="a3G-cS-bdY" id="XEf-4V-0tN"/>
                         <outlet property="firstOption" destination="BFd-Pr-yUK" id="cgA-ns-YHv"/>
                         <outlet property="frontLabel" destination="XBm-5G-pE7" id="r8Y-f8-ben"/>
+                        <outlet property="nextButton" destination="IyI-Sp-j84" id="ktE-at-G7q"/>
+                        <outlet property="prevButton" destination="vYA-Ps-UB2" id="g4a-Lo-i2x"/>
                         <outlet property="secondOption" destination="NBe-ST-2gb" id="ki7-5K-Aph"/>
                         <outlet property="thirdOption" destination="J0v-er-f2F" id="fiZ-sa-4MV"/>
                     </connections>
