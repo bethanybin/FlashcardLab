@@ -17,8 +17,9 @@ struct Flashcard {
 
 class ViewController: UIViewController {
     
-    var flashcards = [Flashcard]()
+    var flashcards = [Flashcard] ()
     var currentIndex = 0
+    var correctAnswerButton: UIButton!
     @IBOutlet weak var firstOption: UIButton!
     
     @IBOutlet weak var secondOption: UIButton!
@@ -34,7 +35,6 @@ class ViewController: UIViewController {
         backLabel.isHidden = true
         frontLabel.isHidden = false
         card.layer.cornerRadius = 20.0
-        card.layer.shadowRadius = 15.0
         card.layer.shadowRadius = 15.0
         card.layer.shadowOpacity = 0.2
         backLabel.layer.cornerRadius = 20.0
@@ -64,40 +64,111 @@ class ViewController: UIViewController {
         }
         // Do any additional setup after loading the view.
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        card.alpha = 0.0
+        card.transform = CGAffineTransform.identity.scaledBy(x: 0.75, y: 0.75)
+        firstOption.alpha = 0.0
+        firstOption.transform = CGAffineTransform.identity.scaledBy(x: 0.75, y: 0.75)
+        secondOption.alpha = 0.0
+        secondOption.transform = CGAffineTransform.identity.scaledBy(x: 0.75, y: 0.75)
+        thirdOption.alpha = 0.0
+        thirdOption.transform = CGAffineTransform.identity.scaledBy(x: 0.75, y: 0.75)
+        
+        UIView.animate(withDuration: 0.6, delay: 0.5, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.5, options: [], animations: {
+            self.card.alpha = 1.0
+            self.card.transform = CGAffineTransform.identity
+            self.firstOption.alpha = 1.0
+            self.firstOption.transform = CGAffineTransform.identity
+            self.secondOption.alpha = 1.0
+            self.secondOption.transform = CGAffineTransform.identity
+            self.thirdOption.alpha = 1.0
+            self.thirdOption.transform = CGAffineTransform.identity
+        })
+    }
 
     @IBAction func didTapFirstOption(_ sender: Any) {
-        firstOption.isHidden = true
+        if firstOption == correctAnswerButton{
+            flipFlashcard()
+        }
+        else{
+            firstOption.isEnabled = false
+        }
     }
     
     @IBAction func didTapSecondOption(_ sender: Any) {
-        backLabel.isHidden = false
-        frontLabel.isHidden = true
+        if secondOption == correctAnswerButton{
+            flipFlashcard()
+        }
+        else{
+            secondOption.isEnabled = false
+        }
     }
     
     @IBAction func didTapThirdOption(_ sender: Any) {
-        thirdOption.isHidden = true
-    }
-    @IBAction func didTapOnFlashcard(_ sender: Any) {
-        if(frontLabel.isHidden){
-            frontLabel.isHidden = false
-            backLabel.isHidden = true
+        if thirdOption == correctAnswerButton{
+            flipFlashcard()
         }
         else{
-            backLabel.isHidden = false
-            frontLabel.isHidden = true
+            thirdOption.isEnabled = false
         }
+    }
+    @IBAction func didTapOnFlashcard(_ sender: Any) {
+        flipFlashcard()
+    }
+    
+    func flipFlashcard(){
+        UIView.transition(with: card, duration: 0.3, options: .transitionFlipFromRight, animations: {
+            if(self.frontLabel.isHidden){
+                self.frontLabel.isHidden = false
+                self.backLabel.isHidden = true
+            }
+            else{
+                self.backLabel.isHidden = false
+                self.frontLabel.isHidden = true
+            }
+        })
     }
     
     @IBAction func didTapOnPrev(_ sender: Any) {
         currentIndex = currentIndex - 1
-        updateLabels()
+        //updateLabels()
+        animateCardOutPrev()
         updateNextPrevButton()
     }
     
     @IBAction func didTapOnNext(_ sender: Any) {
         currentIndex = currentIndex + 1
-        updateLabels()
+        //updateLabels()
+        animateCardOutNext()
         updateNextPrevButton()
+    }
+    func animateCardOutNext(){
+        UIView.animate(withDuration: 0.3, animations: {
+            self.card.transform = CGAffineTransform.identity.translatedBy(x: -300.0, y: 0.0)}, completion: { finished in
+                self.updateLabels()
+                self.animateCardInNext()
+        })
+    }
+    func animateCardInNext(){
+        card.transform = CGAffineTransform.identity.translatedBy(x: 300.0, y: 0.0)
+        UIView.animate(withDuration: 0.3, animations: {
+            self.card.transform = CGAffineTransform.identity
+        })
+    }
+    func animateCardOutPrev(){
+        UIView.animate(withDuration: 0.3, animations: {
+            self.card.transform = CGAffineTransform.identity.translatedBy(x: 300.0, y: 0.0)}, completion: { finished in
+                self.updateLabels()
+                self.animateCardInPrev()
+        })
+    }
+    func animateCardInPrev(){
+        card.transform = CGAffineTransform.identity.translatedBy(x: -300.0, y: 0.0)
+        UIView.animate(withDuration: 0.3, animations: {
+            self.card.transform = CGAffineTransform.identity
+        })
     }
     @IBAction func didTapOnDelete(_ sender: Any) {
         let alert = UIAlertController(title: "Delete Flashcard", message: "Are you sure you want to delete it?", preferredStyle: .actionSheet)
@@ -139,6 +210,9 @@ class ViewController: UIViewController {
     }
     
     func updateNextPrevButton(){
+        firstOption.isEnabled = true
+        secondOption.isEnabled = true
+        thirdOption.isEnabled = true
         if currentIndex == flashcards.count - 1{
             nextButton.isEnabled = false
         }
@@ -157,9 +231,16 @@ class ViewController: UIViewController {
         let currentFlashcard = flashcards[currentIndex]
         frontLabel.text = currentFlashcard.question
         backLabel.text = currentFlashcard.answer
-        self.firstOption.setTitle(currentFlashcard.extraAnswerOne, for: .normal)
-        self.secondOption.setTitle(currentFlashcard.answer, for: .normal)
-        self.thirdOption.setTitle(currentFlashcard.extraAnswerTwo, for: .normal)
+        frontLabel.isHidden = false
+        backLabel.isHidden = true
+        let buttons = [firstOption, secondOption, thirdOption].shuffled()
+        let answers = [currentFlashcard.extraAnswerOne, currentFlashcard.extraAnswerTwo, currentFlashcard.answer]
+        for (button, answer) in zip(buttons, answers){
+            button?.setTitle(answer, for: .normal)
+            if answer == currentFlashcard.answer{
+                correctAnswerButton = button
+            }
+        }
     }
     
     func saveAllFlashcardsToDisk(){
